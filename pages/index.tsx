@@ -1,10 +1,14 @@
 import Head from 'next/head';
 import {useState} from 'react';
-import styles from './index.module.css';
+import styles from './index.module.scss';
+import {Button} from 'antd';
+import {openApiPost, PostType} from '@/pages/api';
 
 export default function Home() {
   const [animalInput, setAnimalInput] = useState('')
   const [result, setResult] = useState()
+  const actionList = ['completions', 'edits', 'images'];
+  const [placeholder, setPlaceholder]= useState('请输入内容')
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -31,24 +35,51 @@ export default function Home() {
       // alert(error.message);
     }
   }
+  const buttonClick = (type:string)=>{
+    switch (type) {
+      case 'completions':
+        console.log(type)
+        openApiPost(animalInput, PostType.completions)
+        break;
+      case 'edits':
+        console.log(type)
+        break;
+      case 'images':
+        console.log(type)
+        setPlaceholder('请输入图片内容')
+        break;
+      default:
+        break;
+
+    }
+
+  }
 
   return (
     <div>
       <Head>
-        <title>OpenAI Quickstart</title>
+        <title>OpenAI</title>
         <link rel="icon" href="/dog.png"/>
       </Head>
 
       <main className={styles.main}>
-        <img src="/dog.png" className={styles.icon}/>
         <div className={styles.buttonView}>
-
+          {actionList.map(item => (
+            <Button
+              key={item}
+              size="small"
+              onClick={() => buttonClick(item)}
+              className={styles.btn}
+            >
+              {item}
+            </Button>
+          ))}
         </div>
         <form onSubmit={onSubmit}>
           <input
             type="text"
             name="animal"
-            placeholder="Enter an animal"
+            placeholder={placeholder}
             value={animalInput}
             onChange={(e) => setAnimalInput(e.target.value)}
           />
@@ -59,3 +90,4 @@ export default function Home() {
     </div>
   );
 }
+
