@@ -28,12 +28,19 @@ export default async function (req, res) {
 
   try {
     const completion = await openai.createCompletion({
-      model: 'text-davinci-003',
-      prompt: content,
-      temperature: 0.6,
+      model:'text-davinci-003',
+      prompt:'如何做一个前端开发',
+      temperature:0.9,
+      max_tokens:2048,
+      top_p:1,
+      frequency_penalty:0.0,
+      presence_penalty:0.6,
     });
 
-    res.status(200).json({ result: completion.data.choices });
+    res.status(200).json({ result: completion.data });
+    if(finish_reason==='length'){
+      completion.next()
+    }
   } catch(error) {
     // Consider adjusting the error handling logic for your use case
     if (error.response) {
